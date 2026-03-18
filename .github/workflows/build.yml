@@ -1,0 +1,25 @@
+name: Build Windows EXE
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyinstaller PyQt6 biopython
+
+      - name: Build EXE
+        run: pyinstaller --onefile --windowed --add-data "sangerseq-full2.py;." sangerseq_gui.py
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v3
+        with:
+          name: SangerSeq-Windows
+          path: dist/sangerseq_gui.exe
