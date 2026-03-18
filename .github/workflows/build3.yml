@@ -1,0 +1,49 @@
+name: Build Mac and Windows
+
+on: [push]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyinstaller PyQt6 biopython
+
+      - name: Build EXE
+        run: pyinstaller --onefile --windowed --add-data "sangerseq-full2.py;." sangerseq_gui.py
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: SangerSeq-Windows
+          path: dist/sangerseq_gui.exe
+
+  build-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyinstaller PyQt6 biopython
+
+      - name: Build APP
+        run: pyinstaller --onefile --windowed --add-data "sangerseq-full2.py:." sangerseq_gui.py
+
+      - name: Upload APP
+        uses: actions/upload-artifact@v4
+        with:
+          name: SangerSeq-Mac
+          path: dist/sangerseq_gui
